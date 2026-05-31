@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboratório de IA Conversacional Aplicada ao Contexto Acadêmico — Ocean Brasil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ── Ocean Brand ── */
+    --navy:          #0A1744;
+    --navy-dark:     #060F2E;
+    --navy-mid:      #112060;
+    --navy-light:    #1A2F7A;
+    --gradient-start:#E91E8C;
+    --gradient-mid:  #FF6635;
+    --gradient-end:  #00B4D8;
+    --cyan:          #00B4D8;
+    --pink:          #E91E8C;
+    --orange:        #FF6635;
+
+    /* ── Content (light) ── */
+    --bg-primary:    #F7F8FC;
+    --bg-secondary:  #EEF0F8;
+    --bg-elevated:   #FFFFFF;
+    --border:        #DDE1F0;
+    --border-strong: #C4CADF;
+    --text-primary:  #0D1533;
+    --text-secondary:#4A5478;
+    --text-muted:    #8A92B4;
+
+    /* ── Shadows ── */
+    --shadow-xs: 0 1px 2px rgba(10,23,68,0.06);
+    --shadow-sm: 0 2px 6px rgba(10,23,68,0.08);
+    --shadow-md: 0 4px 16px rgba(10,23,68,0.10);
+    --shadow-lg: 0 8px 28px rgba(10,23,68,0.14);
+    --shadow-glow: 0 4px 20px rgba(233,30,140,0.25);
+
+    /* ── Radius ── */
+    --r-sm: 4px; --r-md: 8px; --r-lg: 12px;
+    --r-xl: 16px; --r-2xl: 24px; --r-full: 9999px;
+
+    /* ── Typography ── */
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; font-size: 16px; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--font-body); cursor: pointer; border: none; background: none; }
+  ul, ol { list-style: none; }
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: var(--r-full); }
+
+  /* ── LAYOUT ──────────────────────────────── */
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    grid-template-rows: 64px 1fr auto;
+    min-height: 100vh;
+  }
+
+  /* ── TOPBAR ──────────────────────────────── */
+  .topbar {
+    grid-column: 1 / -1;
+    background: var(--navy-dark);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 0 24px 0 0;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .topbar__brand {
+    display: flex; align-items: center; gap: 0;
+    height: 100%;
+  }
+  .topbar__logo-wrap {
+    height: 64px;
+    padding: 0 20px;
+    display: flex; align-items: center;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    background: var(--navy);
+  }
+  /* OCEAN SVG LOGO */
+  .ocean-logo { display: flex; align-items: center; gap: 10px; }
+  .ocean-logo__icon {
+    width: 32px; height: 32px;
+    position: relative; flex-shrink: 0;
+  }
+  .ocean-logo__text {
+    font-family: var(--font-body);
+    font-size: 1rem; font-weight: 700;
+    letter-spacing: 0.18em;
+    color: #FFFFFF;
+    text-transform: uppercase;
+  }
+  .topbar__title-wrap {
+    padding: 0 20px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .topbar__title {
+    font-family: var(--font-body);
+    font-size: 0.85rem; font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.2;
+  }
+  .topbar__sub {
+    font-size: 0.68rem; color: rgba(255,255,255,0.4);
+    letter-spacing: 0.05em; text-transform: uppercase;
+    margin-top: 1px;
+  }
+  .topbar__meta { display: flex; align-items: center; gap: 8px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: var(--r-full);
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.02em;
+  }
+  .badge--grad {
+    background: linear-gradient(90deg, var(--pink), var(--orange));
+    color: white;
+  }
+  .badge--glass {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.7);
+  }
+
+  /* ── SIDEBAR ──────────────────────────────── */
+  .sidebar {
+    grid-row: 2;
+    background: var(--navy);
+    border-right: 1px solid rgba(255,255,255,0.05);
+    padding: 20px 12px;
+    position: sticky; top: 64px;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+  }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+  .sidebar__label {
+    font-size: 0.6rem; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    padding: 0 8px; margin-bottom: 4px; margin-top: 16px;
+  }
+  .sidebar__label:first-child { margin-top: 0; }
+  .nav-item {
+    display: flex; align-items: center; gap: 9px;
+    padding: 8px 10px; border-radius: var(--r-md);
+    color: rgba(255,255,255,0.5);
+    font-size: 0.8rem; font-weight: 500;
+    cursor: pointer; transition: all 0.15s;
+    margin-bottom: 2px; border: none; background: none; width: 100%; text-align: left;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); }
+  .nav-item.active {
+    background: linear-gradient(90deg, rgba(233,30,140,0.18), rgba(255,102,53,0.12));
+    color: white;
+    border: 1px solid rgba(233,30,140,0.25);
+  }
+  .nav-item__num {
+    width: 20px; height: 20px;
+    background: rgba(255,255,255,0.07);
+    border-radius: var(--r-full);
+    font-size: 0.62rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.15s;
+    color: rgba(255,255,255,0.4);
+  }
+  .nav-item.active .nav-item__num {
+    background: linear-gradient(135deg, var(--pink), var(--orange));
+    color: white;
+  }
+  .nav-item__time { margin-left: auto; font-size: 0.62rem; color: rgba(255,255,255,0.25); font-weight: 400; }
+  .progress-bar {
+    margin: 8px 10px 4px;
+    height: 3px; background: rgba(255,255,255,0.08);
+    border-radius: var(--r-full); overflow: hidden;
+  }
+  .progress-bar__fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--pink), var(--orange), var(--cyan));
+    border-radius: var(--r-full);
+    transition: width 0.4s ease; width: 0%;
+  }
+  .progress-label { font-size: 0.65rem; color: rgba(255,255,255,0.25); padding: 0 10px; margin-bottom: 12px; }
+
+  /* ── MAIN ──────────────────────────────────── */
+  .main { grid-row: 2; padding: 36px 48px; max-width: 860px; }
+
+  /* ── SECTIONS ──────────────────────────────── */
+  .section { display: none; animation: fadeUp 0.3s ease-out both; }
+  .section.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECTION HERO ──────────────────────────── */
+  .section-hero {
+    margin-bottom: 28px; padding-bottom: 22px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-hero__eyebrow { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .section-hero__tag {
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    background: linear-gradient(90deg, var(--pink), var(--orange));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    border: 1px solid rgba(233,30,140,0.3);
+    padding: 2px 8px; border-radius: var(--r-full);
+    background-clip: unset; -webkit-background-clip: unset; -webkit-text-fill-color: unset;
+    color: var(--pink);
+    background: rgba(233,30,140,0.08);
+  }
+  .section-hero__time { font-size: 0.72rem; color: var(--text-muted); }
+  .section-hero__title {
+    font-family: var(--font-display); font-size: 1.9rem; font-weight: 700;
+    line-height: 1.2; letter-spacing: -0.02em; color: var(--text-primary); margin-bottom: 10px;
+  }
+  .section-hero__desc { font-size: 0.93rem; color: var(--text-secondary); line-height: 1.7; max-width: 620px; }
+
+  /* ── CARDS ──────────────────────────────────── */
+  .card {
+    background: var(--bg-elevated); border: 1px solid var(--border);
+    border-radius: var(--r-lg); padding: 20px;
+    box-shadow: var(--shadow-sm); margin-bottom: 16px; transition: box-shadow 0.2s;
+  }
+  .card:hover { box-shadow: var(--shadow-md); }
+  .card--grad-top { border-top: 3px solid; border-image: linear-gradient(90deg, var(--pink), var(--orange)) 1; }
+  .card--warning { border-left: 3px solid var(--orange); background: #FFFAF5; }
+  .card--success { border-left: 3px solid #1A7F5A; background: #F4FDF8; }
+  .card--danger  { border-left: 3px solid #C0392B; background: #FFF8F8; }
+  .card__title { font-size: 0.93rem; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .card__body  { font-size: 0.87rem; color: var(--text-secondary); line-height: 1.7; }
+  .card__body p + p { margin-top: 8px; }
+
+  /* ── ACTIVITY ──────────────────────────────── */
+  .activity {
+    background: var(--bg-elevated); border: 1px solid var(--border);
+    border-radius: var(--r-lg); overflow: hidden; margin-bottom: 20px;
+    box-shadow: var(--shadow-xs);
+  }
+  .activity__header {
+    padding: 14px 18px; background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer; user-select: none; transition: background 0.15s;
+  }
+  .activity__header:hover { background: var(--border); }
+  .activity__num {
+    width: 26px; height: 26px;
+    background: linear-gradient(135deg, var(--pink), var(--orange));
+    color: white; border-radius: var(--r-full);
+    font-size: 0.72rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .activity__title { font-size: 0.88rem; font-weight: 600; color: var(--text-primary); flex: 1; }
+  .activity__time {
+    font-size: 0.68rem; color: var(--text-muted);
+    background: var(--bg-elevated); padding: 2px 8px;
+    border-radius: var(--r-full); border: 1px solid var(--border);
+  }
+  .activity__chevron { color: var(--text-muted); font-size: 0.75rem; transition: transform 0.2s; }
+  .activity.open .activity__chevron { transform: rotate(180deg); }
+  .activity__body { display: none; padding: 18px; }
+  .activity.open .activity__body { display: block; }
+
+  /* ── PROMPT BOX ──────────────────────────── */
+  .prompt-box {
+    background: #F0F4FF; border: 1px solid #C7D4F8;
+    border-radius: var(--r-lg); margin: 14px 0; overflow: hidden;
+  }
+  .prompt-box__header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 14px; background: var(--navy);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .prompt-box__label {
+    font-size: 0.65rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .prompt-box__copy {
+    font-size: 0.68rem; font-weight: 600;
+    background: rgba(255,255,255,0.1); color: white;
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 3px 10px; border-radius: var(--r-full);
+    cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .prompt-box__copy:hover { background: linear-gradient(90deg, var(--pink), var(--orange)); border-color: transparent; }
+  .prompt-box__copy.copied { background: #1A7F5A; border-color: #1A7F5A; }
+  .prompt-box__text {
+    padding: 14px 16px; font-family: 'DM Sans', monospace;
+    font-size: 0.84rem; color: #1A2A7A; line-height: 1.7; white-space: pre-wrap;
+  }
+
+  /* ── ALERTS ──────────────────────────────── */
+  .alert {
+    padding: 11px 14px; border-radius: var(--r-md);
+    font-size: 0.84rem; line-height: 1.6;
+    display: flex; gap: 10px; margin: 12px 0;
+  }
+  .alert__icon { flex-shrink: 0; font-size: 0.95rem; margin-top: 1px; }
+  .alert--warning { background: #FFF7EE; color: #7C3A00; border: 1px solid #FFD08A; }
+  .alert--info    { background: #EEF3FF; color: #1A3080; border: 1px solid #B8CCFF; }
+  .alert--success { background: #EDFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+  .alert--danger  { background: #FFF0F0; color: #991B1B; border: 1px solid #FBBCBC; }
+
+  /* ── TABLE ───────────────────────────────── */
+  .table-wrap {
+    border: 1px solid var(--border); border-radius: var(--r-lg);
+    overflow: hidden; margin: 14px 0; box-shadow: var(--shadow-xs);
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    background: var(--navy); color: rgba(255,255,255,0.7);
+    font-size: 0.65rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 9px 13px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left;
+  }
+  td {
+    padding: 10px 13px; border-bottom: 1px solid var(--border);
+    color: var(--text-primary); font-size: 0.84rem; vertical-align: top; line-height: 1.5;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg-secondary); }
+  td strong { color: var(--text-primary); font-weight: 600; }
+  td em { color: var(--text-muted); font-style: italic; font-size: 0.79rem; }
+
+  /* ── TOOL CHIPS ──────────────────────────── */
+  .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin: 14px 0; }
+  .tool-chip {
+    background: var(--bg-elevated); border: 1px solid var(--border);
+    border-radius: var(--r-lg); padding: 14px;
+    display: flex; flex-direction: column; gap: 6px;
+    transition: all 0.18s; box-shadow: var(--shadow-xs);
+    text-decoration: none;
+  }
+  .tool-chip:hover {
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-2px);
+    border-color: var(--pink);
+  }
+  .tool-chip__tag {
+    display: inline-flex; align-items: center;
+    font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    background: linear-gradient(90deg, rgba(233,30,140,0.1), rgba(255,102,53,0.08));
+    color: var(--pink); border: 1px solid rgba(233,30,140,0.2);
+    padding: 1px 7px; border-radius: var(--r-full); width: fit-content;
+  }
+  .tool-chip__name { font-size: 0.85rem; font-weight: 700; color: var(--text-primary); }
+  .tool-chip__url  { font-size: 0.68rem; color: var(--cyan); font-weight: 500; }
+  .tool-chip__role { font-size: 0.73rem; color: var(--text-muted); line-height: 1.4; }
+
+  /* ── FLOW ────────────────────────────────── */
+  .flow { display: flex; flex-direction: column; gap: 0; margin: 18px 0; }
+  .flow-step { display: flex; align-items: flex-start; gap: 14px; }
+  .flow-step__connector { display: flex; flex-direction: column; align-items: center; width: 32px; flex-shrink: 0; }
+  .flow-step__dot {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, rgba(233,30,140,0.12), rgba(255,102,53,0.08));
+    border: 2px solid var(--pink);
+    border-radius: var(--r-full);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.73rem; font-weight: 700; color: var(--pink); flex-shrink: 0;
+  }
+  .flow-step__line {
+    width: 2px; flex: 1; min-height: 20px;
+    background: linear-gradient(var(--pink), var(--border)); margin: 2px 0;
+  }
+  .flow-step:last-child .flow-step__line { display: none; }
+  .flow-step__content { padding: 6px 0 18px; flex: 1; }
+  .flow-step__label { font-size: 0.86rem; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+  .flow-step__tools span {
+    display: inline-block; background: var(--bg-secondary);
+    border: 1px solid var(--border); border-radius: var(--r-full);
+    padding: 1px 8px; margin: 2px 2px 0 0; font-size: 0.7rem; color: var(--text-secondary);
+  }
+
+  /* ── LISTS ───────────────────────────────── */
+  .styled-list { margin: 10px 0 10px 4px; }
+  .styled-list li {
+    position: relative; padding-left: 18px;
+    font-size: 0.87rem; color: var(--text-secondary); margin-bottom: 6px; line-height: 1.6;
+  }
+  .styled-list li::before {
+    content: ''; position: absolute; left: 0; top: 8px;
+    width: 6px; height: 6px;
+    background: linear-gradient(135deg, var(--pink), var(--orange));
+    border-radius: var(--r-full);
+  }
+
+  /* ── DISCUSSION ──────────────────────────── */
+  .discussion-q {
+    background: linear-gradient(135deg, rgba(10,23,68,0.04), rgba(233,30,140,0.04));
+    border: 1px solid rgba(233,30,140,0.15);
+    border-radius: var(--r-lg); padding: 14px 18px; margin: 10px 0;
+    font-size: 0.88rem; color: var(--navy-light); line-height: 1.6;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .discussion-q__icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── PRINCIPLE ───────────────────────────── */
+  .principle {
+    background: linear-gradient(135deg, var(--navy-dark), var(--navy-mid));
+    border-radius: var(--r-xl); padding: 22px 28px; margin: 18px 0; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .principle::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='260,10 290,30 290,70 260,90 230,70 230,30' fill='none' stroke='rgba(233,30,140,0.12)' stroke-width='1.5'/%3E%3Cpolygon points='10,25 35,10 60,25 60,55 35,70 10,55' fill='none' stroke='rgba(0,180,216,0.1)' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right center/contain;
+  }
+  .principle__text {
+    font-family: var(--font-display); font-size: 1rem; font-style: italic;
+    color: rgba(255,255,255,0.9); line-height: 1.7; position: relative;
+  }
+  .principle__text strong { color: var(--orange); font-style: normal; }
+
+  /* ── CHECKLIST ───────────────────────────── */
+  .checklist { margin: 14px 0; }
+  .check-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+    cursor: pointer; user-select: none;
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-item__box {
+    width: 18px; height: 18px; border: 2px solid var(--border-strong);
+    border-radius: var(--r-sm); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px; transition: all 0.15s; font-size: 0.68rem; color: white;
+  }
+  .check-item.checked .check-item__box { background: #1A7F5A; border-color: #1A7F5A; }
+  .check-item__text { font-size: 0.86rem; color: var(--text-primary); line-height: 1.5; transition: color 0.15s; }
+  .check-item.checked .check-item__text { color: var(--text-muted); text-decoration: line-through; }
+
+  /* ── HOME HERO ───────────────────────────── */
+  .home-hero {
+    background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy-mid) 60%, #1A2F5A 100%);
+    border-radius: var(--r-2xl); padding: 40px; margin-bottom: 28px;
+    position: relative; overflow: hidden;
+  }
+  /* hexagon decoration */
+  .home-hero::before {
+    content: '';
+    position: absolute; right: -20px; top: -20px;
+    width: 400px; height: 300px;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='320,20 360,44 360,92 320,116 280,92 280,44' fill='none' stroke='url(%23g1)' stroke-width='2'/%3E%3Cpolygon points='360,70 385,84 385,112 360,126 335,112 335,84' fill='none' stroke='url(%23g2)' stroke-width='1.5'/%3E%3Cpolygon points='270,130 310,154 310,202 270,226 230,202 230,154' fill='none' stroke='url(%23g3)' stroke-width='1.5' opacity='0.6'/%3E%3Cpolygon points='340,160 365,174 365,202 340,216 315,202 315,174' fill='none' stroke='url(%23g1)' stroke-width='1.5' opacity='0.5'/%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23E91E8C'/%3E%3Cstop offset='1' stop-color='%23FF6635'/%3E%3C/linearGradient%3E%3ClinearGradient id='g2' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%2300B4D8'/%3E%3Cstop offset='1' stop-color='%23E91E8C'/%3E%3C/linearGradient%3E%3ClinearGradient id='g3' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23FF6635'/%3E%3Cstop offset='1' stop-color='%2300B4D8'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E") no-repeat;
+    pointer-events: none;
+  }
+  /* diagonal line */
+  .home-hero::after {
+    content: '';
+    position: absolute; top: 0; left: 50%; right: -100px; bottom: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(233,30,140,0.06) 40%, rgba(255,102,53,0.04) 60%, transparent 60%);
+    pointer-events: none;
+  }
+  .home-hero__content { position: relative; z-index: 1; }
+  .home-hero__badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 4px 12px; border-radius: var(--r-full); margin-bottom: 14px;
+  }
+  .home-hero__title {
+    font-family: var(--font-display); font-size: 2.2rem; font-weight: 700;
+    line-height: 1.1; letter-spacing: -0.02em; color: white; margin-bottom: 10px;
+  }
+  .home-hero__sub {
+    font-size: 0.95rem; color: rgba(255,255,255,0.6);
+    line-height: 1.7; max-width: 520px; margin-bottom: 28px;
+  }
+  .home-hero__stats { display: flex; gap: 28px; flex-wrap: wrap; }
+  .stat { display: flex; flex-direction: column; gap: 1px; }
+  .stat__val {
+    font-family: var(--font-display); font-size: 1.5rem; font-weight: 700;
+    background: linear-gradient(90deg, var(--pink), var(--orange));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .stat__label { font-size: 0.68rem; color: rgba(255,255,255,0.4); }
+
+  /* ── HOME CARDS ──────────────────────────── */
+  .home-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+  .home-card {
+    background: var(--bg-elevated); border: 1px solid var(--border);
+    border-radius: var(--r-lg); padding: 18px;
+    box-shadow: var(--shadow-sm); cursor: pointer; transition: all 0.2s;
+  }
+  .home-card:hover {
+    box-shadow: var(--shadow-glow); transform: translateY(-2px);
+    border-color: rgba(233,30,140,0.3);
+  }
+  .home-card__num {
+    font-family: var(--font-display); font-size: 1.8rem; font-weight: 700;
+    background: linear-gradient(135deg, var(--pink), var(--orange));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    opacity: 0.35; line-height: 1; margin-bottom: 8px;
+  }
+  .home-card__title { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+  .home-card__desc  { font-size: 0.76rem; color: var(--text-muted); line-height: 1.5; }
+  .home-card__time  {
+    font-size: 0.65rem; font-weight: 600; color: var(--text-muted);
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    padding: 2px 8px; border-radius: var(--r-full); display: inline-block; margin-top: 8px;
+  }
+
+  /* ── FOOTER ──────────────────────────────── */
+  .app-footer {
+    grid-column: 1 / -1;
+    background: var(--navy-dark);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding: 14px 24px;
+  }
+  .app-footer__inner {
+    display: flex; align-items: center; flex-wrap: wrap;
+    gap: 6px 10px; font-size: 0.7rem; color: rgba(255,255,255,0.3);
+  }
+  .app-footer__name { font-weight: 600; color: rgba(255,255,255,0.55); }
+  .app-footer__org  { font-style: italic; }
+  .app-footer__sep  { color: rgba(255,255,255,0.12); }
+  .app-footer__links { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .app-footer__link { color: rgba(255,255,255,0.3); transition: color 0.15s; }
+  .app-footer__link:hover { color: var(--cyan); text-decoration: underline; }
+
+  /* ── UTILS ───────────────────────────────── */
+  h3.sub { font-size: 0.88rem; font-weight: 700; color: var(--text-primary); margin: 18px 0 10px; letter-spacing: -0.01em; }
+  p.body  { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+  .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); border: none; margin: 22px 0; }
+
+  /* ── APP LINK ────────────────────────────── */
+  .app-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    color: var(--cyan); font-weight: 600; font-size: 0.82rem;
+    text-decoration: none; transition: color 0.15s;
+  }
+  .app-link:hover { color: var(--pink); text-decoration: underline; }
+  .app-link::after { content: ' ↗'; font-size: 0.7em; opacity: 0.7; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ── TOPBAR ──────────────────────────────────────────────────── -->
+<header class="topbar">
+  <div class="topbar__brand">
+    <div class="topbar__logo-wrap">
+      <!-- OCEAN LOGO SVG -->
+      <div class="ocean-logo">
+        <span class="ocean-logo__text">Ocean</span>
+      </div>
+    </div>
+    <div class="topbar__title-wrap">
+      <div class="topbar__title">Laboratório de IA Conversacional Aplicada ao Contexto Acadêmico</div>
+      <div class="topbar__sub">Roteiro de Aula · Samsung Ocean Brasil</div>
+    </div>
+  </div>
+  <div class="topbar__meta">
+    <span class="badge badge--grad">3h · 7 blocos</span>
+    <span class="badge badge--glass" id="progress-badge">0% concluído</span>
+  </div>
+</header>
+
+<!-- ── SIDEBAR ─────────────────────────────────────────────────── -->
+<nav class="sidebar">
+  <div class="progress-bar"><div class="progress-bar__fill" id="progress-fill"></div></div>
+  <div class="progress-label" id="progress-label">0 de 7 blocos visitados</div>
+
+  <div class="sidebar__label">Início</div>
+  <button class="nav-item active" data-section="home" onclick="showSection('home', this)">
+    <span class="nav-item__num">⌂</span> Visão geral
+  </button>
+
+  <div class="sidebar__label">Blocos</div>
+  <button class="nav-item" data-section="b0" onclick="showSection('b0', this)">
+    <span class="nav-item__num">0</span> Pacto ético <span class="nav-item__time">20min</span>
+  </button>
+  <button class="nav-item" data-section="b1" onclick="showSection('b1', this)">
+    <span class="nav-item__num">1</span> Área → mapa do campo <span class="nav-item__time">40min</span>
+  </button>
+  <button class="nav-item" data-section="b2" onclick="showSection('b2', this)">
+    <span class="nav-item__num">2</span> Exploração e lacunas <span class="nav-item__time">30min</span>
+  </button>
+  <button class="nav-item" data-section="b3" onclick="showSection('b3', this)">
+    <span class="nav-item__num">3</span> Pergunta de pesquisa <span class="nav-item__time">20min</span>
+  </button>
+  <button class="nav-item" data-section="b4" onclick="showSection('b4', this)">
+    <span class="nav-item__num">4</span> Protocolo de revisão <span class="nav-item__time">30min</span>
+  </button>
+  <button class="nav-item" data-section="b5" onclick="showSection('b5', this)">
+    <span class="nav-item__num">5</span> Estruturação e escrita <span class="nav-item__time">50min</span>
+  </button>
+  <button class="nav-item" data-section="b6" onclick="showSection('b6', this)">
+    <span class="nav-item__num">6</span> Revisão e integridade <span class="nav-item__time">25min</span>
+  </button>
+  <button class="nav-item" data-section="b7" onclick="showSection('b7', this)">
+    <span class="nav-item__num">7</span> Reflexão final <span class="nav-item__time">15min</span>
+  </button>
+</nav>
+
+<!-- ── MAIN ───────────────────────────────────────────────────── -->
+<main class="main">
+
+<!-- HOME ─────────────────────────────────────────────── -->
+<section class="section active" id="section-home">
+  <div class="home-hero">
+    <div class="home-hero__content">
+      <div class="home-hero__badge">
+        <svg width="12" height="12" viewBox="0 0 32 32" fill="none"><path d="M6 16 C6 10.477 10.477 6 16 6 C21.523 6 26 10.477 26 16" stroke="white" stroke-width="2.5" stroke-linecap="round"/><path d="M8 21 C10 18 13 16.5 16 16.5 C19 16.5 22 18 24 21" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.7"/></svg>
+        Samsung Ocean Brasil · UEA
+      </div>
+      <div class="home-hero__title">Laboratório de IA conversacional<br>aplicada ao contexto acadêmico</div>
+      <div class="home-hero__sub">Da área de interesse ao artigo científico — usando IA de forma ética, crítica e estratégica.</div>
+      <div class="home-hero__stats">
+        <div class="stat"><div class="stat__val">7</div><div class="stat__label">Blocos</div></div>
+        <div class="stat"><div class="stat__val">3h30</div><div class="stat__label">Duração</div></div>
+        <div class="stat"><div class="stat__val">6</div><div class="stat__label">Ferramentas</div></div>
+        <div class="stat"><div class="stat__val">12+</div><div class="stat__label">Prompts prontos</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-cards">
+    <div class="home-card" onclick="showSection('b0', document.querySelector('[data-section=b0]'))">
+      <div class="home-card__num">00</div>
+      <div class="home-card__title">Pacto ético</div>
+      <div class="home-card__desc">Transparência, autoria e verificação crítica antes de abrir qualquer ferramenta.</div>
+      <div class="home-card__time">20 min</div>
+    </div>
+    <div class="home-card" onclick="showSection('b1', document.querySelector('[data-section=b1]'))">
+      <div class="home-card__num">01</div>
+      <div class="home-card__title">Área → Mapa do campo</div>
+      <div class="home-card__desc">Exploração inicial, artigos relevantes com bibliometria, altmetria e Litmap.</div>
+      <div class="home-card__time">40 min</div>
+    </div>
+    <div class="home-card" onclick="showSection('b2', document.querySelector('[data-section=b2]'))">
+      <div class="home-card__num">02</div>
+      <div class="home-card__title">Exploração e lacunas</div>
+      <div class="home-card__desc">Leitura estratégica com SciSpace e síntese cruzada com NotebookLM.</div>
+      <div class="home-card__time">30 min</div>
+    </div>
+    <div class="home-card" onclick="showSection('b3', document.querySelector('[data-section=b3]'))">
+      <div class="home-card__num">03</div>
+      <div class="home-card__title">Pergunta de pesquisa</div>
+      <div class="home-card__desc">Da lacuna à pergunta PICO ou PCC, com validação coletiva da turma.</div>
+      <div class="home-card__time">20 min</div>
+    </div>
+    <div class="home-card" onclick="showSection('b4', document.querySelector('[data-section=b4]'))">
+      <div class="home-card__num">04</div>
+      <div class="home-card__title">Protocolo de revisão</div>
+      <div class="home-card__desc">Descritores, critérios de inclusão/exclusão e busca guiada no Consensus.</div>
+      <div class="home-card__time">30 min</div>
+    </div>
+    <div class="home-card" onclick="showSection('b5', document.querySelector('[data-section=b5]'))">
+      <div class="home-card__num">05</div>
+      <div class="home-card__title">Estruturação e escrita</div>
+      <div class="home-card__desc">Modelo CARS, escrita em camadas e humanização do texto de IA.</div>
+      <div class="home-card__time">50 min</div>
+    </div>
+    <div class="home-card" onclick="showSection('b6', document.querySelector('[data-section=b6]'))">
+      <div class="home-card__num">06</div>
+      <div class="home-card__title">Revisão e integridade</div>
+      <div class="home-card__desc">Coesão, referências verificadas e declaração de uso de IA.</div>
+      <div class="home-card__time">25 min</div>
+    </div>
+    <div class="home-card" onclick="showSection('b7', document.querySelector('[data-section=b7]'))">
+      <div class="home-card__num">07</div>
+      <div class="home-card__title">Reflexão final</div>
+      <div class="home-card__desc">Limites, potenciais e o que a IA não consegue substituir na pesquisa.</div>
+      <div class="home-card__time">15 min</div>
+    </div>
+  </div>
+
+  <h3 class="sub">Ferramentas utilizadas na aula — clique para acessar</h3>
+  <div class="tools-grid">
+    <a class="tool-chip" href="https://www.perplexity.ai" target="_blank" rel="noopener">
+      <div class="tool-chip__tag">Exploração</div>
+      <div class="tool-chip__name">Perplexity</div>
+      <div class="tool-chip__url">perplexity.ai ↗</div>
+      <div class="tool-chip__role">Panorama inicial da literatura com citação em tempo real</div>
+    </a>
+    <a class="tool-chip" href="https://www.litmaps.com" target="_blank" rel="noopener">
+      <div class="tool-chip__tag">Mapeamento</div>
+      <div class="tool-chip__name">Litmap</div>
+      <div class="tool-chip__url">litmaps.com ↗</div>
+      <div class="tool-chip__role">Redes de citação, artigos sementes e clusters temáticos</div>
+    </a>
+    <a class="tool-chip" href="https://consensus.app" target="_blank" rel="noopener">
+      <div class="tool-chip__tag">Evidências</div>
+      <div class="tool-chip__name">Consensus</div>
+      <div class="tool-chip__url">consensus.app ↗</div>
+      <div class="tool-chip__role">Triagem de evidências com Consensus Meter</div>
+    </a>
+    <a class="tool-chip" href="https://typeset.io" target="_blank" rel="noopener">
+      <div class="tool-chip__tag">Leitura</div>
+      <div class="tool-chip__name">SciSpace</div>
+      <div class="tool-chip__url">typeset.io ↗</div>
+      <div class="tool-chip__role">Leitura e extração de dados de artigos em PDF</div>
+    </a>
+    <a class="tool-chip" href="https://notebooklm.google.com" target="_blank" rel="noopener">
+      <div class="tool-chip__tag">Síntese</div>
+      <div class="tool-chip__name">NotebookLM</div>
+      <div class="tool-chip__url">notebooklm.google.com ↗</div>
+      <div class="tool-chip__role">Síntese cruzada e identificação de lacunas entre fontes</div>
+    </a>
+    <a class="tool-chip" href="https://claude.ai" target="_blank" rel="noopener">
+      <div class="tool-chip__tag">Escrita</div>
+      <div class="tool-chip__name">Claude</div>
+      <div class="tool-chip__url">claude.ai ↗</div>
+      <div class="tool-chip__role">Estruturação, escrita assistida e revisão de forma</div>
+    </a>
+    <a class="tool-chip" href="https://chatgpt.com" target="_blank" rel="noopener">
+      <div class="tool-chip__tag">Escrita</div>
+      <div class="tool-chip__name">ChatGPT</div>
+      <div class="tool-chip__url">chatgpt.com ↗</div>
+      <div class="tool-chip__role">Estruturação, escrita assistida e revisão de forma</div>
+    </a>
+    <a class="tool-chip" href="https://scholar.google.com" target="_blank" rel="noopener">
+      <div class="tool-chip__tag">Busca</div>
+      <div class="tool-chip__name">Google Scholar</div>
+      <div class="tool-chip__url">scholar.google.com ↗</div>
+      <div class="tool-chip__role">Busca bibliográfica e verificação de citações</div>
+    </a>
+    <a class="tool-chip" href="https://www.altmetric.com" target="_blank" rel="noopener">
+      <div class="tool-chip__tag">Altmetria</div>
+      <div class="tool-chip__name">Altmetric</div>
+      <div class="tool-chip__url">altmetric.com ↗</div>
+      <div class="tool-chip__role">Repercussão pública de artigos em mídias e redes</div>
+    </a>
+    <a class="tool-chip" href="https://www.zotero.org" target="_blank" rel="noopener">
+      <div class="tool-chip__tag">Referências</div>
+      <div class="tool-chip__name">Zotero</div>
+      <div class="tool-chip__url">zotero.org ↗</div>
+      <div class="tool-chip__role">Gestão gratuita de referências bibliográficas</div>
+    </a>
+  </div>
+</section>
+
+<!-- BLOCO 0 ──────────────────────────────────────────── -->
+<section class="section" id="section-b0">
+  <div class="section-hero">
+    <div class="section-hero__eyebrow">
+      <span class="section-hero__tag">Bloco 0</span>
+      <span class="section-hero__time">⏱ 20 minutos</span>
+    </div>
+    <h1 class="section-hero__title">Abertura e Pacto Ético</h1>
+    <p class="section-hero__desc">Antes de abrir qualquer ferramenta, a turma estabelece um contrato coletivo sobre o que é ético, permitido e esperado no uso de IA na pesquisa científica.</p>
+  </div>
+
+  <div class="activity open" id="act-0-1">
+    <div class="activity__header" onclick="toggleActivity('act-0-1')">
+      <div class="activity__num">1</div>
+      <div class="activity__title">Discussão inicial — o que a turma já pensa</div>
+      <span class="activity__time">5 min</span><span class="activity__chevron">▼</span>
+    </div>
+    <div class="activity__body">
+      <div class="discussion-q"><span class="discussion-q__icon">💬</span><span>Pergunte à turma: <strong>"O que vocês acham que é permitido — e o que não é — usar IA num artigo científico?"</strong> Deixe a discussão fluir sem julgamentos. Anote as respostas no quadro.</span></div>
+      <p class="body">O objetivo é ativar o que os alunos já sabem (ou imaginam) para depois contrastar com as diretrizes reais dos periódicos.</p>
+    </div>
+  </div>
+
+  <div class="activity" id="act-0-2">
+    <div class="activity__header" onclick="toggleActivity('act-0-2')">
+      <div class="activity__num">2</div>
+      <div class="activity__title">Os três princípios do uso ético de IA na pesquisa</div>
+      <span class="activity__time">10 min</span><span class="activity__chevron">▼</span>
+    </div>
+    <div class="activity__body">
+      <div class="card card--grad-top">
+        <div class="card__title">🔍 Transparência</div>
+        <div class="card__body">Declarar quando e como a IA foi usada. Muitos periódicos já exigem uma nota na seção de Métodos ou em rodapé. Ocultar é falta de integridade científica.</div>
+      </div>
+      <div class="card card--grad-top">
+        <div class="card__title">✍️ Responsabilidade autoral</div>
+        <div class="card__body">A IA <strong>não é coautora</strong>. O pesquisador responde integralmente por tudo que assina — incluindo erros que a IA introduziu e o autor não percebeu.</div>
+      </div>
+      <div class="card card--grad-top">
+        <div class="card__title">🔎 Verificação crítica</div>
+        <div class="card__body">Toda saída da IA precisa ser verificada nas fontes primárias antes de ser incorporada ao texto. IA alucina, simplifica e generaliza — sempre.</div>
+      </div>
+      <div class="alert alert--info">
+        <span class="alert__icon">📄</span>
+        <div>Diretrizes: <strong><a href="http://memoria2.cnpq.br/web/guest/view/-/journal_content/56_INSTANCE_0oED/10157/23142775" target="_blank" class="app-link" style="font-size:inherit">CNPQ</a></strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="activity" id="act-0-3">
+    <div class="activity__header" onclick="toggleActivity('act-0-3')">
+      <div class="activity__num">3</div>
+      <div class="activity__title">O contrato da aula</div>
+      <span class="activity__time">5 min</span><span class="activity__chevron">▼</span>
+    </div>
+    <div class="activity__body">
+      <div class="principle">
+        <div class="principle__text">"Nessa aula, a IA é um <strong>andaime</strong> — não a parede.<br>Ela sustenta enquanto você constrói. O edifício é <strong>seu</strong>."</div>
+      </div>
+      <p class="body">Combine com a turma que, ao final, cada um saberá identificar <em>onde</em> usou IA e <em>por quê</em> — e conseguirá redigir uma declaração honesta de uso.</p>
+    </div>
+  </div>
+</section>
+
+<!-- BLOCO 1 ──────────────────────────────────────────── -->
+<section class="section" id="section-b1">
+  <div class="section-hero">
+    <div class="section-hero__eyebrow">
+      <span class="section-hero__tag">Bloco 1</span>
+      <span class="section-hero__time">⏱ 40 minutos</span>
+    </div>
+    <h1 class="section-hero__title">Da Área de Interesse ao Mapa do Campo</h1>
+    <p class="section-hero__desc">Partindo de um tema amplo, identificamos artigos e autores mais relevantes usando critérios objetivos — bibliometria, altmetria e centralidade na rede de citações.</p>
+  </div>
+
+  <div class="activity open" id="act-1-1">
+    <div class="activity__header" onclick="toggleActivity('act-1-1')">
+      <div class="activity__num">1</div>
+      <div class="activity__title">Exploração inicial com Perplexity e Claude/ChatGPT</div>
+      <span class="activity__time">10 min</span><span class="activity__chevron">▼</span>
+    </div>
+    <div class="activity__body">
+      <p class="body">Cada participante escreve em 2–3 frases sua <strong>área de interesse</strong> (não uma pergunta — apenas o tema geral).</p>
+      <p class="body">No <a href="https://www.perplexity.ai" target="_blank" class="app-link">Perplexity</a>, pesquise o tema. Observe: quais conceitos-chave aparecem? Quais autores? Que debates o sistema aponta?</p>
+      <p class="body">Em seguida, leve o tema ao <a href="https://claude.ai" target="_blank" class="app-link">Claude</a> ou <a href="https://chatgpt.com" target="_blank" class="app-link">ChatGPT</a>:</p>
+      <div class="prompt-box">
+        <div class="prompt-box__header">
+          <span class="prompt-box__label">✦ Prompt · Claude ou ChatGPT</span>
+          <button class="prompt-box__copy" onclick="copyPrompt(this)">📋 Copiar</button>
+        </div>
+        <div class="prompt-box__text">Sou pesquisador(a) de pós-graduação. Minha área de interesse é:
+[descreva o tema em 2-3 frases]
+
+Por favor:
+1. Mapeie os principais subtemas e correntes teóricas dessa área
+2. Indique quais são os debates em aberto ou tensões não resolvidas
+3. Sugira termos técnicos e palavras-chave em português e inglês para busca bibliográfica</div>
+      </div>
+      <div class="alert alert--warning">
+        <span class="alert__icon">⚠️</span>
+        <div>Use a saída da IA como <strong>ponto de partida</strong>. O Perplexity pode errar referências. Nunca cite sem verificar o artigo original.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="activity" id="act-1-2">
+    <div class="activity__header" onclick="toggleActivity('act-1-2')">
+      <div class="activity__num">2</div>
+      <div class="activity__title">Identificação de artigos e autores relevantes com critérios objetivos</div>
+      <span class="activity__time">20 min</span><span class="activity__chevron">▼</span>
+    </div>
+    <div class="activity__body">
+      <p class="body">A relevância não é impressão — pode ser medida. Utilize os três eixos:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Eixo</th><th>O que mede</th><th>Acesse</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Bibliometria</strong></td>
+              <td>Citações, h-index, fator de impacto do periódico</td>
+              <td><a href="https://scholar.google.com" target="_blank" class="app-link">Google Scholar</a> · <a href="https://www.scopus.com" target="_blank" class="app-link">Scopus</a></td>
+            </tr>
+            <tr>
+              <td><strong>Altmetria</strong></td>
+              <td>Repercussão pública: redes, mídia, documentos de política</td>
+              <td><a href="https://www.altmetric.com" target="_blank" class="app-link">Altmetric.com</a></td>
+            </tr>
+            <tr>
+              <td><strong>Centralidade na rede</strong></td>
+              <td>Posição estrutural na teia de citações do campo</td>
+              <td><a href="https://www.litmaps.com" target="_blank" class="app-link">Litmap</a> · <a href="https://www.connectedpapers.com" target="_blank" class="app-link">Connected Papers</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <h3 class="sub">Prática — <a href="https://www.litmaps.com" target="_blank" class="app-link">Litmap</a> (10 min)</h3>
+      <p class="body">Insira 1–2 artigos identificados e explore:</p>
+      <ul class="styled-list">
+        <li>Quais artigos aparecem como <strong>nós centrais</strong>? (alta centralidade = altamente influentes)</li>
+        <li>Quais são os <strong>artigos sementes</strong> que fundaram o campo?</li>
+        <li>Existe algum cluster temático isolado? Isso pode indicar uma lacuna de diálogo.</li>
+      </ul>
+      <h3 class="sub">Prática — <a href="https://scholar.google.com" target="_blank" class="app-link">Google Scholar</a> / <a href="https://www.scopus.com" target="_blank" class="app-link">Scopus</a> (10 min)</h3>
+      <p class="body">Filtre por: citações (do mais citado), últimos 5 anos, periódicos Qualis A1/A2 ou JCR indexado. Monte uma <strong>lista anotada</strong> com os 5–8 artigos mais relevantes, com o critério justificado.</p>
+      <div class="discussion-q"><span class="discussion-q__icon">💬</span><span><strong>Discussão rápida:</strong> Um artigo muito citado é necessariamente o mais importante? O que a altmetria revela que a bibliometria não captura?</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOCO 2 ──────────────────────────────────────────── -->
+<section class="section" id="section-b2">
+  <div class="section-hero">
+    <div class="section-hero__eyebrow">
+      <span class="section-hero__tag">Bloco 2</span>
+      <span class="section-hero__time">⏱ 30 minutos</span>
+    </div>
+    <h1 class="section-hero__title">Exploração do Campo e Identificação de Lacunas</h1>
+    <p class="section-hero__desc">Leitura estratégica com SciSpace e síntese cruzada com NotebookLM para entender o estado da arte e identificar onde há espaço para contribuição original.</p>
+  </div>
+
+  <div class="activity open" id="act-2-1">
+    <div class="activity__header" onclick="toggleActivity('act-2-1')">
+      <div class="activity__num">1</div>
+      <div class="activity__title">Leitura estratégica com SciSpace</div>
+      <span class="activity__time">15 min</span><span class="activity__chevron">▼</span>
+    </div>
+    <div class="activity__body">
+      <p class="body">Importe os artigos selecionados no <a href="https://typeset.io" target="_blank" class="app-link">SciSpace</a> e use os prompts para cada um:</p>
+      <div class="prompt-box">
+        <div class="prompt-box__header">
+          <span class="prompt-box__label">✦ Prompts · SciSpace</span>
+          <button class="prompt-box__copy" onclick="copyPrompt(this)">📋 Copiar</button>
+        </div>
+        <div class="prompt-box__text">Qual é a pergunta de pesquisa principal deste artigo?
+Qual foi a metodologia usada?
+Quais foram os principais resultados e limitações declaradas pelos autores?</div>
+      </div>
+      <p class="body">Monte uma <strong>tabela de síntese</strong>:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Autor/Ano</th><th>Pergunta</th><th>Método</th><th>Resultado</th><th>Limitação declarada</th></tr></thead>
+          <tbody>
+            <tr><td colspan="5" style="text-align:center;color:var(--text-muted);font-style:italic;padding:20px;">Preencha com seus artigos durante a atividade</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert alert--warning">
+        <span class="alert__icon">⚠️</span>
+        <div>O SciSpace pode interpretar mal tabelas ou dados quantitativos. <strong>Sempre confira os números no PDF original.</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="activity" id="act-2-2">
+    <div class="activity__header" onclick="toggleActivity('act-2-2')">
+      <div class="activity__num">2</div>
+      <div class="activity__title">Síntese cruzada e lacunas com NotebookLM</div>
+      <span class="activity__time">15 min</span><span class="activity__chevron">▼</span>
+    </div>
+    <div class="activity__body">
+      <p class="body">Importe todos os PDFs no <a href="https://notebooklm.google.com" target="_blank" class="app-link">NotebookLM</a>. Faça as perguntas em sequência:</p>
+      <div class="prompt-box">
+        <div class="prompt-box__header">
+          <span class="prompt-box__label">✦ Prompts · NotebookLM</span>
+          <button class="prompt-box__copy" onclick="copyPrompt(this)">📋 Copiar</button>
+        </div>
+        <div class="prompt-box__text">Quais são os pontos de convergência entre esses estudos?
+Quais são as principais contradições, limitações recorrentes ou debates não resolvidos?
+Que perguntas esses estudos deixaram em aberto?
+Que populações, contextos ou variáveis estão sub-representados nessa literatura?</div>
+      </div>
+      <div class="alert alert--success">
+        <span class="alert__icon">💡</span>
+        <div>A resposta à <strong>última pergunta</strong> é onde as lacunas reais moram. Use a saída para construir, no quadro, uma lista coletiva de lacunas — insumo direto para o Bloco 3.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOCO 3 ──────────────────────────────────────────── -->
+<section class="section" id="section-b3">
+  <div class="section-hero">
+    <div class="section-hero__eyebrow">
+      <span class="section-hero__tag">Bloco 3</span>
+      <span class="section-hero__time">⏱ 20 minutos</span>
+    </div>
+    <h1 class="section-hero__title">Refinamento da Pergunta de Pesquisa</h1>
+    <p class="section-hero__desc">Transformar uma lacuna identificada em uma pergunta precisa, viável e original — a IA refina, a turma valida.</p>
+  </div>
+
+  <div class="activity open" id="act-3-1">
+    <div class="activity__header" onclick="toggleActivity('act-3-1')">
+      <div class="activity__num">1</div>
+      <div class="activity__title">Da lacuna à pergunta — formato PICO ou PCC</div>
+      <span class="activity__time">10 min</span><span class="activity__chevron">▼</span>
+    </div>
+    <div class="activity__body">
+      <p class="body">Cada participante escolhe <strong>uma lacuna</strong> da lista do Bloco 2 e formula uma primeira pergunta. Em seguida, use <a href="https://claude.ai" target="_blank" class="app-link">Claude</a> ou <a href="https://chatgpt.com" target="_blank" class="app-link">ChatGPT</a>:</p>
+      <div class="prompt-box">
+        <div class="prompt-box__header">
+          <span class="prompt-box__label">✦ Prompt · Claude ou ChatGPT</span>
+          <button class="prompt-box__copy" onclick="copyPrompt(this)">📋 Copiar</button>
+        </div>
+        <div class="prompt-box__text">Identifiquei a seguinte lacuna na literatura sobre [tema]:
+[descreva a lacuna]
+
+Minha primeira versão da pergunta de pesquisa é:
+[sua pergunta]
+
+Por favor:
+1. Avalie se a pergunta endereça de fato a lacuna identificada
+2. Aponte possíveis ambiguidades ou problemas de escopo
+3. Sugira 3 versões alternativas mais precisas, utilizando o framework PICO (População, Intervenção, Comparação, Outcome) ou PCC (População, Conceito, Contexto) conforme o tipo de estudo</div>
+      </div>
+      <div class="alert alert--warning">
+        <span class="alert__icon">⚠️</span>
+        <div>A IA aponta possibilidades — a <strong>escolha final é do pesquisador</strong> e precisa ser justificada pela literatura.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="activity" id="act-3-2">
+    <div class="activity__header" onclick="toggleActivity('act-3-2')">
+      <div class="activity__num">2</div>
+      <div class="activity__title">Validação coletiva da turma</div>
+      <span class="activity__time">10 min</span><span class="activity__chevron">▼</span>
+    </div>
+    <div class="activity__body">
+      <p class="body">Cada participante apresenta sua pergunta em <strong>1 minuto</strong>. A turma avalia com três critérios:</p>
+      <div class="checklist">
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-item__box">✓</div>
+          <div class="check-item__text"><strong>Específica</strong> — delimita quem, o quê, onde e quando?</div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-item__box">✓</div>
+          <div class="check-item__text"><strong>Viável</strong> — pode ser respondida com os recursos e tempo disponíveis?</div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-item__box">✓</div>
+          <div class="check-item__text"><strong>Original</strong> — não foi respondida pela literatura já mapeada?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOCO 4 ──────────────────────────────────────────── -->
+<section class="section" id="section-b4">
+  <div class="section-hero">
+    <div class="section-hero__eyebrow">
+      <span class="section-hero__tag">Bloco 4</span>
+      <span class="section-hero__time">⏱ 30 minutos</span>
+    </div>
+    <h1 class="section-hero__title">Protocolo de Revisão Sistemática</h1>
+    <p class="section-hero__desc">Definir antes de ler as regras da revisão — garantindo rigor e rastreabilidade. O protocolo distingue revisão científica de curadoria por gosto.</p>
+  </div>
+
+  <div class="card card--warning">
+    <div class="card__title">⚠️ Por que isso importa</div>
+    <div class="card__body">Sem protocolo prévio, há espaço para <strong>viés de confirmação</strong>. O protocolo deve ser registrado antes das buscas em plataformas como <a href="https://www.crd.york.ac.uk/prospero/" target="_blank" class="app-link">PROSPERO</a> ou <a href="https://osf.io" target="_blank" class="app-link">OSF</a>.</div>
+  </div>
+
+  <div class="activity open" id="act-4-1">
+    <div class="activity__header" onclick="toggleActivity('act-4-1')">
+      <div class="activity__num">1</div>
+      <div class="activity__title">Componentes do protocolo</div>
+      <span class="activity__time">15 min</span><span class="activity__chevron">▼</span>
+    </div>
+    <div class="activity__body">
+      <div class="prompt-box">
+        <div class="prompt-box__header">
+          <span class="prompt-box__label">✦ Prompt · Claude ou ChatGPT</span>
+          <button class="prompt-box__copy" onclick="copyPrompt(this)">📋 Copiar</button>
+        </div>
+        <div class="prompt-box__text">Estou planejando uma revisão sistemática de literatura com a seguinte pergunta:
+[sua pergunta de pesquisa]
+
+Por favor, ajude-me a estruturar um protocolo com:
+1. Descritores e estratégia de busca (termos booleanos para Scopus, PubMed, Web of Science)
+2. Critérios de inclusão e exclusão (tipo de estudo, período, idioma, população etc.)
+3. Bases de dados recomendadas para esse campo
+4. Procedimento de triagem (títulos/resumos → texto completo)
+5. Instrumento de extração de dados (quais informações serão coletadas de cada artigo)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="activity" id="act-4-2">
+    <div class="activity__header" onclick="toggleActivity('act-4-2')">
+      <div class="activity__num">2</div>
+      <div class="activity__title">Busca guiada com Consensus</div>
+      <span class="activity__time">15 min</span><span class="activity__chevron">▼</span>
+    </div>
+    <div class="activity__body">
+      <p class="body">Com os descritores definidos, acesse o <a href="https://consensus.app" target="_blank" class="app-link">Consensus</a> e execute a busca. Observe:</p>
+      <ul class="styled-list">
+        <li>O <strong>Consensus Meter</strong> — percentual de estudos que concordam/discordam</li>
+        <li>Quais artigos sobrevivem aos seus critérios de inclusão/exclusão</li>
+        <li>Compare com o Litmap — há artigos novos? Divergências relevantes?</li>
+      </ul>
+      <div class="alert alert--danger">
+        <span class="alert__icon">🚫</span>
+        <div>O Consensus é ferramenta de <strong>triagem, não de citação</strong>. Cada artigo identificado precisa ser lido antes de ser incluído.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOCO 5 ──────────────────────────────────────────── -->
+<section class="section" id="section-b5">
+  <div class="section-hero">
+    <div class="section-hero__eyebrow">
+      <span class="section-hero__tag">Bloco 5</span>
+      <span class="section-hero__time">⏱ 50 minutos</span>
+    </div>
+    <h1 class="section-hero__title">Estruturação e Escrita do Artigo</h1>
+    <p class="section-hero__desc">Usar IA como parceira de escrita sem perder a voz do pesquisador. O modelo CARS orienta a introdução; a IA revisa — não escreve.</p>
+  </div>
+
+  <div class="activity open" id="act-5-1">
+    <div class="activity__header" onclick="toggleActivity('act-5-1')">
+      <div class="activity__num">1</div>
+      <div class="activity__title">Construindo o esqueleto do artigo</div>
+      <span class="activity__time">10 min</span><span class="activity__chevron">▼</span>
+    </div>
+    <div class="activity__body">
+      <div class="prompt-box">
+        <div class="prompt-box__header">
+          <span class="prompt-box__label">✦ Prompt · Claude ou ChatGPT</span>
+          <button class="prompt-box__copy" onclick="copyPrompt(this)">📋 Copiar</button>
+        </div>
+        <div class="prompt-box__text">Estou escrevendo um artigo científico sobre [tema].
+Minha pergunta de pesquisa é: [pergunta]
+Meu método é: revisão sistemática de literatura
+Meu protocolo prevê: [resumo do protocolo]
+
+Por favor, sugira uma estrutura de artigo adequada para o periódico [nome ou área],
+com os tópicos e subtópicos de cada seção e uma frase descrevendo o que deve constar em cada uma.</div>
+      </div>
+      <p class="body">O pesquisador avalia, ajusta e <strong>aprova</strong> o esqueleto — ou reconstrói com suas próprias palavras.</p>
+    </div>
+  </div>
+
+  <div class="activity" id="act-5-2">
+    <div class="activity__header" onclick="toggleActivity('act-5-2')">
+      <div class="activity__num">2</div>
+      <div class="activity__title">Modelo CARS — escrita da introdução em camadas</div>
+      <span class="activity__time">25 min</span><span class="activity__chevron">▼</span>
+    </div>
+    <div class="activity__body">
+      <p class="body">A introdução segue o modelo <strong>CARS</strong> (Create a Research Space, Swales 1990):</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Movimento</th><th>O que escrever</th><th>Insumo desta aula</th></tr></thead>
+          <tbody>
+            <tr><td><strong>M1 — Estabelecer território</strong></td><td>Mostrar que o tema é relevante e consolidado</td><td><em>Bloco 1 — panorama do campo</em></td></tr>
+            <tr><td><strong>M2 — Criar nicho</strong></td><td>Identificar a lacuna, contradição ou problema</td><td><em>Bloco 2 — lacunas identificadas</em></td></tr>
+            <tr><td><strong>M3 — Ocupar o nicho</strong></td><td>Apresentar o objetivo/pergunta do estudo</td><td><em>Bloco 3 — pergunta refinada</em></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="prompt-box">
+        <div class="prompt-box__header">
+          <span class="prompt-box__label">✦ Prompt de revisão · Claude ou ChatGPT</span>
+          <button class="prompt-box__copy" onclick="copyPrompt(this)">📋 Copiar</button>
+        </div>
+        <div class="prompt-box__text">Este é meu rascunho do Movimento 2 da introdução (criação do nicho):
+[seu texto]
+
+Por favor:
+1. Identifique o que está funcionando bem
+2. Aponte o que está fraco, genérico ou ausente
+3. Sugira como fortalecer — mas preserve meu estilo e voz</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="activity" id="act-5-3">
+    <div class="activity__header" onclick="toggleActivity('act-5-3')">
+      <div class="activity__num">3</div>
+      <div class="activity__title">Evitando o texto "com cara de IA"</div>
+      <span class="activity__time">15 min</span><span class="activity__chevron">▼</span>
+    </div>
+    <div class="activity__body">
+      <ul class="styled-list">
+        <li>Conectivos excessivos: <em>"Furthermore", "Moreover", "É importante ressaltar que"</em></li>
+        <li>Estrutura sempre simétrica e previsível (listas de três, parágrafos idênticos)</li>
+        <li>Ausência de posicionamento crítico ou voz do autor</li>
+        <li>Generalidades sem dado, referência ou exemplo específico</li>
+      </ul>
+      <div class="prompt-box">
+        <div class="prompt-box__header">
+          <span class="prompt-box__label">✦ Prompt de humanização</span>
+          <button class="prompt-box__copy" onclick="copyPrompt(this)">📋 Copiar</button>
+        </div>
+        <div class="prompt-box__text">Reescreva este parágrafo para soar mais natural e academicamente autêntico. Elimine conectivos excessivos, reduza a simetria estrutural e adicione posicionamento crítico. Preserve o conteúdo e os argumentos principais:
+
+[cole o parágrafo aqui]</div>
+      </div>
+      <div class="principle">
+        <div class="principle__text">A IA melhora a <strong>forma</strong>. O argumento, a interpretação e o posicionamento são <strong>do pesquisador</strong>.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOCO 6 ──────────────────────────────────────────── -->
+<section class="section" id="section-b6">
+  <div class="section-hero">
+    <div class="section-hero__eyebrow">
+      <span class="section-hero__tag">Bloco 6</span>
+      <span class="section-hero__time">⏱ 25 minutos</span>
+    </div>
+    <h1 class="section-hero__title">Revisão, Referências e Integridade</h1>
+    <p class="section-hero__desc">Finalizar com qualidade e integridade acadêmica — incluindo a declaração de uso de IA que os periódicos modernos exigem.</p>
+  </div>
+
+  <div class="activity open" id="act-6-1">
+    <div class="activity__header" onclick="toggleActivity('act-6-1')">
+      <div class="activity__num">1</div>
+      <div class="activity__title">Revisão de clareza e coesão</div>
+      <span class="activity__time">10 min</span><span class="activity__chevron">▼</span>
+    </div>
+    <div class="activity__body">
+      <div class="prompt-box">
+        <div class="prompt-box__header">
+          <span class="prompt-box__label">✦ Prompt de revisão final</span>
+          <button class="prompt-box__copy" onclick="copyPrompt(this)">📋 Copiar</button>
+        </div>
+        <div class="prompt-box__text">Revise este texto acadêmico para:
+1. Clareza e precisão conceitual
+2. Coesão entre parágrafos
+3. Adequação ao registro científico formal
+
+Não altere o conteúdo nem os argumentos — apenas a forma.
+
+[cole a seção aqui]</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="activity" id="act-6-2">
+    <div class="activity__header" onclick="toggleActivity('act-6-2')">
+      <div class="activity__num">2</div>
+      <div class="activity__title">Verificação de referências</div>
+      <span class="activity__time">10 min</span><span class="activity__chevron">▼</span>
+    </div>
+    <div class="activity__body">
+      <div class="alert alert--danger">
+        <span class="alert__icon">🚫</span>
+        <div><strong>Regra de ouro:</strong> nunca peça para a IA gerar referências. Ela alucina títulos, anos e autores com altíssima plausibilidade.</div>
+      </div>
+      <ul class="styled-list">
+        <li>Use <a href="https://www.perplexity.ai" target="_blank" class="app-link">Perplexity</a> ou <a href="https://typeset.io" target="_blank" class="app-link">SciSpace</a> para localizar artigos reais</li>
+        <li>Confirme via <strong>DOI</strong> no <a href="https://scholar.google.com" target="_blank" class="app-link">Google Scholar</a> ou <a href="https://www.crossref.org" target="_blank" class="app-link">Crossref</a></li>
+        <li>Organize com <a href="https://www.zotero.org" target="_blank" class="app-link">Zotero</a> ou <a href="https://www.mendeley.com" target="_blank" class="app-link">Mendeley</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="activity" id="act-6-3">
+    <div class="activity__header" onclick="toggleActivity('act-6-3')">
+      <div class="activity__num">3</div>
+      <div class="activity__title">Declaração de uso de IA</div>
+      <span class="activity__time">5 min</span><span class="activity__chevron">▼</span>
+    </div>
+    <div class="activity__body">
+      <div class="prompt-box">
+        <div class="prompt-box__header">
+          <span class="prompt-box__label">📄 Modelo de declaração</span>
+          <button class="prompt-box__copy" onclick="copyPrompt(this)">📋 Copiar</button>
+        </div>
+        <div class="prompt-box__text">Declaração de uso de inteligência artificial
+
+Neste trabalho, ferramentas de inteligência artificial foram utilizadas como suporte às seguintes etapas: [ex: mapeamento bibliométrico via Litmap; triagem de literatura via Consensus e SciSpace; síntese de fontes via NotebookLM; revisão linguística via Claude]. Todas as afirmações, interpretações, análises e conclusões são de inteira responsabilidade dos autores. Nenhuma ferramenta de IA foi listada como coautora.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOCO 7 ──────────────────────────────────────────── -->
+<section class="section" id="section-b7">
+  <div class="section-hero">
+    <div class="section-hero__eyebrow">
+      <span class="section-hero__tag">Bloco 7</span>
+      <span class="section-hero__time">⏱ 15 minutos</span>
+    </div>
+    <h1 class="section-hero__title">Fechamento e Reflexão Crítica</h1>
+    <p class="section-hero__desc">Consolidar o aprendizado, identificar limites e o que a IA não consegue substituir na pesquisa científica.</p>
+  </div>
+
+  <h3 class="sub">Perguntas para debate final</h3>
+  <div class="discussion-q"><span class="discussion-q__icon">💬</span><span>Em que momentos a IA foi mais útil? Em que momentos criou ruído ou viés?</span></div>
+  <div class="discussion-q"><span class="discussion-q__icon">💬</span><span>Como garantir que a voz e o raciocínio do pesquisador não se perdem no processo?</span></div>
+  <div class="discussion-q"><span class="discussion-q__icon">💬</span><span>O uso de bibliometria e altmetria mudou a forma como você avalia a relevância de um artigo?</span></div>
+  <div class="discussion-q"><span class="discussion-q__icon">💬</span><span>Que habilidades de pesquisa a IA <strong>não pode substituir</strong>?</span></div>
+
+  <hr class="divider">
+  <h3 class="sub">Tarefa para casa (opcional)</h3>
+  <div class="card">
+    <div class="card__title">🏠 Para o próximo encontro</div>
+    <div class="card__body">
+      <p>Execute os Blocos 1 a 4 para sua própria pesquisa. Traga:</p>
+      <div class="checklist">
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-item__box">✓</div>
+          <div class="check-item__text">Lista de artigos com critérios justificados (bibliometria, altmetria, centralidade)</div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-item__box">✓</div>
+          <div class="check-item__text">A lacuna identificada a partir da síntese no NotebookLM</div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-item__box">✓</div>
+          <div class="check-item__text">A pergunta de pesquisa refinada no formato PICO ou PCC</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <h3 class="sub">Fluxo completo da aula</h3>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-step__connector"><div class="flow-step__dot">0</div><div class="flow-step__line"></div></div>
+      <div class="flow-step__content"><div class="flow-step__label">Área de interesse</div><div class="flow-step__tools"><span>Perplexity</span><span>Claude / ChatGPT</span></div></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step__connector"><div class="flow-step__dot">1</div><div class="flow-step__line"></div></div>
+      <div class="flow-step__content"><div class="flow-step__label">Artigos e autores relevantes</div><div class="flow-step__tools"><span>Litmap</span><span>Google Scholar</span><span>Scopus</span><span>Altmetric</span></div></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step__connector"><div class="flow-step__dot">2</div><div class="flow-step__line"></div></div>
+      <div class="flow-step__content"><div class="flow-step__label">Leitura estratégica e lacunas</div><div class="flow-step__tools"><span>SciSpace</span><span>NotebookLM</span></div></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step__connector"><div class="flow-step__dot">3</div><div class="flow-step__line"></div></div>
+      <div class="flow-step__content"><div class="flow-step__label">Pergunta refinada</div><div class="flow-step__tools"><span>Claude / ChatGPT</span><span>PICO / PCC</span></div></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step__connector"><div class="flow-step__dot">4</div><div class="flow-step__line"></div></div>
+      <div class="flow-step__content"><div class="flow-step__label">Protocolo de revisão sistemática</div><div class="flow-step__tools"><span>Claude / ChatGPT</span><span>Consensus</span></div></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step__connector"><div class="flow-step__dot">5</div><div class="flow-step__line"></div></div>
+      <div class="flow-step__content"><div class="flow-step__label">Estruturação e escrita (CARS)</div><div class="flow-step__tools"><span>Claude / ChatGPT</span></div></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step__connector"><div class="flow-step__dot">6</div><div class="flow-step__line"></div></div>
+      <div class="flow-step__content"><div class="flow-step__label">Revisão, referências, declaração de IA</div><div class="flow-step__tools"><span>Claude / ChatGPT</span><span>Zotero</span></div></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step__connector"><div class="flow-step__dot">✦</div></div>
+      <div class="flow-step__content"><div class="flow-step__label" style="color:var(--pink);font-weight:700;">Artigo científico + declaração de uso de IA</div></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <h3 class="sub">Referências sugeridas</h3>
+  <ul class="styled-list">
+    <li><a href="https://cope.eu" target="_blank" class="app-link">COPE Guidelines on AI use in research</a> — cope.eu</li>
+    <li>Swales, J. M. (1990). <em>Genre Analysis</em>. Cambridge University Press. [modelo CARS]</li>
+    <li>Page, M. J. et al. (2021). The PRISMA 2020 statement. <em>BMJ</em>, 372.</li>
+    <li>Donthu, N. et al. (2021). How to conduct a bibliometric analysis. <em>Journal of Business Research</em>, 133, 285–296.</li>
+  </ul>
+</section>
+
+</main>
+
+<!-- ── FOOTER ──────────────────────────────────────────────────── -->
+<footer class="app-footer">
+  <div class="app-footer__inner">
+    <span class="app-footer__name">Danielle Pompeu Noronha Pontes, Dra.</span>
+    <span class="app-footer__sep">·</span>
+    <span class="app-footer__org">Universidade do Estado do Amazonas (UEA)</span>
+    <span class="app-footer__sep">·</span>
+    <span class="app-footer__org">Samsung Ocean Brasil — Manaus</span>
+    <span class="app-footer__sep">·</span>
+    <div class="app-footer__links">
+      <a href="https://danipontes.github.io" target="_blank" rel="noopener" class="app-footer__link">danipontes.github.io</a>
+      <span class="app-footer__sep">·</span>
+      <a href="mailto:dnoronha@uea.edu.br" class="app-footer__link">dnoronha@uea.edu.br</a>
+    </div>
+  </div>
+</footer>
+
+</div><!-- /.layout -->
+
+<script>
+  const visited = new Set(['home']);
+
+  function showSection(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const section = document.getElementById('section-' + id);
+    if (section) section.classList.add('active');
+    if (btn) btn.classList.add('active');
+    if (id !== 'home') visited.add(id);
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateProgress() {
+    const blocks = ['b0','b1','b2','b3','b4','b5','b6','b7'];
+    const count = blocks.filter(b => visited.has(b)).length;
+    const pct = Math.round((count / blocks.length) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = count + ' de ' + blocks.length + ' blocos visitados';
+    document.getElementById('progress-badge').textContent = pct + '% concluído';
+  }
+
+  function toggleActivity(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
+
+  function toggleCheck(el) {
+    el.classList.toggle('checked');
+  }
+
+  function copyPrompt(btn) {
+    const text = btn.closest('.prompt-box').querySelector('.prompt-box__text').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓ Copiado!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = '📋 Copiar'; btn.classList.remove('copied'); }, 2000);
+    }).catch(() => {
+      btn.textContent = '✓ Copiado!';
+      setTimeout(() => { btn.textContent = '📋 Copiar'; }, 2000);
+    });
+  }
+</script>
+</body>
+</html>
